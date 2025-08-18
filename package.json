@@ -1,0 +1,44 @@
+{
+  "name": "@sahara/spa",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A vanilla js framework for SPA.",
+  "author": "Martial Boissonneault",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martialboissonneault/sahara-spa.git"
+  },
+  "keywords": [
+    "spa",
+    "framework",
+    "frontend"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/sahara-spa.umd.cjs",
+  "module": "./dist/sahara-spa.es.js",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/sahara-spa.es.js",
+      "require": "./dist/sahara-spa.umd.cjs"
+    }
+  },
+  "bin": {
+    "sahara-spa": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "vite --port 3333",
+    "build": "vite build && tsc src/cli.ts --outDir dist --module NodeNext --target ES2022 && chmod +x dist/cli.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "typescript": "~5.7.3",
+    "vite": "^6.3.1",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}
