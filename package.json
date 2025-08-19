@@ -7,7 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/martialboissonneault/sahara-spa.git"
+    "url": "https://github.com/martialboissonneault/sahara-spa.git"
+  },
+  "homepage": "https://github.com/martialboissonneault/sahara-spa#readme",
+  "bugs": {
+    "url": "https://github.com/martialboissonneault/sahara-spa/issues"
   },
   "keywords": [
     "spa",
