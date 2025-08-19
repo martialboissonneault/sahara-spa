@@ -80,8 +80,7 @@ try {
 }
 
 console.log(green("\nSuccess! Your project is ready."));
-console.log("\nNext steps for local development:");
+console.log("\nNext steps:");
 console.log(`  cd ${projectName}`);
-console.log(`  ${blue("npm link @sahara/spa")}   # Links your local version of the framework`);
-console.log("  npm install           # Installs other dependencies");
-console.log("  npm run dev           # Starts the development server");
+console.log("  npm install");
+console.log("  npm run dev");
