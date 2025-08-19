@@ -155,8 +155,10 @@ this.$<HTMLFormElement>("#myForm").reset();
 
 #### Simplified Event Handling with `this.on()`
 
-`this.on()` combines `querySelector()` and `addEventListener()` into a single, concise call.  
+`this.on()` combines `querySelector()` and `addEventListener()` into a single, concise call.
 It is fully typed, so the event handler knows exactly which event type is expected.
+
+All event listeners attached with `this.on()` are **automatically removed** when the component is disconnected from the DOM, preventing memory leaks without any manual cleanup code.
 
 ```typescript
 // Increment the counter on button click
