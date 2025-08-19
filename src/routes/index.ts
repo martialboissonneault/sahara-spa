@@ -6,6 +6,8 @@ export default class IndexPage extends PageElement {
   static layout = BaseLayout;
 
   private state = Store.observe<{ count: number }>({ count: 0 });
+  //Persistent State
+  //private state = Store.observePersistent<{ count: number }>({ count: 0 }, "home-counter");
 
   connectedCallback() {
     this.renderTemplate();

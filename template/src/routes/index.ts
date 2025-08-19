@@ -4,7 +4,13 @@ import BaseLayout from "./_layout.ts";
 export default class IndexPage extends PageElement {
   static layout = BaseLayout;
 
+  // Choose your state management type:
+
+  // 1. Regular State (in-memory, lost on refresh)
   private state = Store.observe<{ count: number }>({ count: 0 });
+
+  // 2. Persistent State (saved to localStorage, survives refresh)
+  //private state = Store.observePersistent<{ count: number }>({ count: 0 }, "home-counter");
 
   connectedCallback() {
     this.renderTemplate();

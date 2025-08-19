@@ -26,6 +26,56 @@ The URL of a page is determined by its file path within the `src/routes` directo
 - `src/routes/todos/index.ts` → `/todos/`
 - `src/routes/todos/new.ts` → `/todos/new`
 
+## State Management
+
+Sahara SPA includes a simple `Store` utility for managing state within your components. It provides two methods for creating observable state objects. When a property on a state object is modified, any registered callbacks are automatically triggered.
+
+### In-Memory State (Regular)
+
+Use `Store.observe()` for temporary state that is reset when the user navigates away or refreshes the page.
+
+**Example: A simple counter**
+
+```typescript
+import { PageElement, Store } from "@sahara/spa";
+
+export default class MyPage extends PageElement {
+  // The state is lost on page refresh
+  private state = Store.observe<{ count: number }>({ count: 0 });
+
+  connectedCallback() {
+    this.state.onChange("count", () => {
+      // This code runs every time `state.count` changes
+      console.log(`The count is now: ${this.state.count}`);
+    });
+  }
+}
+```
+
+### Persistent State
+
+Use `Store.observePersistent()` to create state that is automatically saved to the browser's `localStorage`. The state will be preserved even if the user closes the tab or browser. You must provide a unique key for the `localStorage`.
+
+**Example: A persistent counter**
+
+```typescript
+// The state is saved to localStorage under the key "home-counter"
+private state = Store.observePersistent<{ count: number }>({ count: 0 }, "home-counter");
+```
+
+**Example: Managing a collection (Todo List)**
+
+```typescript
+interface Todo {
+  id: number;
+  text: string;
+  done: boolean;
+}
+
+// The list of todos will be saved to localStorage under the key "my-todo-list"
+private state = Store.observePersistent<{ todos: Todo[] }>({ todos: [] }, "my-todo-list");
+```
+
 ### 2. Layouts
 
 Layouts are special components that wrap your pages, allowing you to share common UI elements like headers, footers, or sidebars across multiple routes.
