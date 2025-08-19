@@ -4,6 +4,7 @@
     "paths": {
       "$lib/*": ["src/lib/*"],
       "$routes/*": ["src/routes/*"],
+      "@sahara/spa": ["src/main.ts"],
       "@martialboissonneault/sahara-spa": ["src/main.ts"],
       "@martialboissonneault/sahara-spa/*": ["src/*"]
     },

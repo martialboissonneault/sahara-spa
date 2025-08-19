@@ -1,6 +1,6 @@
 # Sahara SPA
 
-[![npm version](https://img.shields.io/npm/v/sahara-spa.svg)](https://www.npmjs.com/package/sahara-spa)
+[![npm version](https://img.shields.io/npm/v/@martialboissonneault/sahara-spa.svg)](https://www.npmjs.com/package/@martialboissonneault/sahara-spa)
 [![build](https://github.com/martialboissonneault/sahara-spa/actions/workflows/build.yml/badge.svg)](https://github.com/martialboissonneault/sahara-spa/actions)
 [![license](https://img.shields.io/github/license/martialboissonneault/sahara-spa.svg)](https://github.com/martialboissonneault/sahara-spa/blob/main/LICENSE)
 
@@ -26,7 +26,9 @@ A minimal, file-based routing framework for building Single Page Applications (S
 
 ## Getting Started
 
-To create a new Sahara SPA project, run the following command:
+The recommended way to start a new project is by using `npx`, which ensures you are always using the latest version of the scaffolding tool.
+
+Run the following command in your terminal:
 
 ```bash
 npx sahara-spa create my-app

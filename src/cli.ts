@@ -70,6 +70,8 @@ try {
   const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
 
   pkgJson.name = projectName;
+  // Replace placeholder dependency with the real one
+  delete pkgJson.dependencies["@sahara/spa"];
   pkgJson.dependencies[frameworkPkg.name] = `^${frameworkPkg.version}`;
 
   fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
