@@ -21,14 +21,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/sahara-spa.umd.cjs",
+  "main": "./dist/sahara-spa.umd.js",
   "module": "./dist/sahara-spa.es.js",
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
       "types": "./dist/main.d.ts",
       "import": "./dist/sahara-spa.es.js",
-      "require": "./dist/sahara-spa.umd.cjs"
+      "require": "./dist/sahara-spa.umd.js"
     }
   },
   "bin": {
