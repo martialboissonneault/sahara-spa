@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@martialboissonneault/sahara-spa.svg)](https://www.npmjs.com/package/@martialboissonneault/sahara-spa)
 [![build](https://github.com/martialboissonneault/sahara-spa/actions/workflows/build.yml/badge.svg)](https://github.com/martialboissonneault/sahara-spa/actions)
-[![license](https://img.shields.io/github/license/martialboissonneault/sahara-spa.svg)](https://github.com/martialboissonneault/sahara-spa/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@martialboissonneault/sahara-spa)](https://github.com/martialboissonneault/sahara-spa/blob/main/LICENSE)
 
 A minimal, file-based routing framework for building Single Page Applications (SPAs) with native Web Components. It is built with Vite and TypeScript, offering a lightweight and modern development experience.
 
