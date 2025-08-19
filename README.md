@@ -20,6 +20,7 @@ A minimal, file-based routing framework for building Single Page Applications (S
   - [Creating a Page](#creating-a-page)
   - [How to Create a Layout](#how-to-create-a-layout)
   - [Nested Layouts](#nested-layouts)
+- [License](#license)
 
 ---
 
@@ -244,3 +245,9 @@ export default class DashboardLayout extends PageElement {
 ```
 
 Any page inside `src/routes/dashboard/` can now use `DashboardLayout`, and it will be automatically wrapped by `BaseLayout` as well. This structure provides a powerful and flexible way to organize your application's UI.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
