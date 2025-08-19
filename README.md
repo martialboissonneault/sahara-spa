@@ -1,6 +1,27 @@
 # Sahara SPA
 
+[![npm version](https://img.shields.io/npm/v/sahara-spa.svg)](https://www.npmjs.com/package/sahara-spa)
+[![build](https://github.com/martialboissonneault/sahara-spa/actions/workflows/build.yml/badge.svg)](https://github.com/martialboissonneault/sahara-spa/actions)
+[![license](https://img.shields.io/github/license/martialboissonneault/sahara-spa.svg)](https://github.com/martialboissonneault/sahara-spa/blob/main/LICENSE)
+
 A minimal, file-based routing framework for building Single Page Applications (SPAs) with native Web Components. It is built with Vite and TypeScript, offering a lightweight and modern development experience.
+
+---
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Core Concepts](#core-concepts)
+  - [1. File-Based Routing](#1-file-based-routing)
+  - [2. State Management](#2-state-management)
+  - [3. Layouts](#3-layouts)
+  - [4. The PageElement Helper Class](#4-the-pageelement-helper-class)
+- [Usage Examples](#usage-examples)
+  - [Creating a Page](#creating-a-page)
+  - [How to Create a Layout](#how-to-create-a-layout)
+  - [Nested Layouts](#nested-layouts)
+
+---
 
 ## Getting Started
 
@@ -13,9 +34,22 @@ npm install
 npm run dev
 ```
 
+---
+
 ## Core Concepts
 
-Sahara SPA is built around two main ideas: file-based routing and nested layouts.
+Sahara SPA is built around a few key ideas designed to simplify web development while giving you **full control**.
+
+Unlike many modern frameworks that hide complexity behind layers of abstractions or rely on heavy dependencies, Sahara SPA is deliberately minimal. It is written in **vanilla JavaScript and TypeScript** and leverages **native Web Components**, meaning:
+
+- No “black box” magic — you can read and understand all parts of the framework.
+- Zero runtime dependencies: your app runs on standards that are already in the browser.
+- TypeScript provides **type safety and autocompletion** without compromising simplicity.
+- The mental model stays close to the web platform itself, making debugging and reasoning straightforward.
+
+This philosophy ensures that developers stay close to the underlying technologies (DOM, Custom Elements, ES modules) while still benefiting from modern conveniences like routing, layouts, and reactive state.
+
+---
 
 ### 1. File-Based Routing
 
@@ -26,11 +60,13 @@ The URL of a page is determined by its file path within the `src/routes` directo
 - `src/routes/todos/index.ts` → `/todos/`
 - `src/routes/todos/new.ts` → `/todos/new`
 
-## State Management
+---
+
+### 2. State Management
 
 Sahara SPA includes a simple `Store` utility for managing state within your components. It provides two methods for creating observable state objects. When a property on a state object is modified, any registered callbacks are automatically triggered.
 
-### In-Memory State (Regular)
+#### In-Memory State (Regular)
 
 Use `Store.observe()` for temporary state that is reset when the user navigates away or refreshes the page.
 
@@ -52,7 +88,7 @@ export default class MyPage extends PageElement {
 }
 ```
 
-### Persistent State
+#### Persistent State
 
 Use `Store.observePersistent()` to create state that is automatically saved to the browser's `localStorage`. The state will be preserved even if the user closes the tab or browser. You must provide a unique key for the `localStorage`.
 
@@ -76,13 +112,59 @@ interface Todo {
 private state = Store.observePersistent<{ todos: Todo[] }>({ todos: [] }, "my-todo-list");
 ```
 
-### 2. Layouts
+---
+
+### 3. Layouts
 
 Layouts are special components that wrap your pages, allowing you to share common UI elements like headers, footers, or sidebars across multiple routes.
 
 - A layout is defined in a `_layout.ts` file.
 - A layout can be placed in any directory inside `src/routes`.
 - Pages or other layouts within the same directory (or subdirectories) can use it.
+
+---
+
+### 4. The `PageElement` Helper Class
+
+While page components can extend the standard `HTMLElement`, Sahara SPA provides a convenient base class, `PageElement`, which offers useful shortcuts to simplify DOM interactions and ensure type safety with TypeScript.
+
+#### Typed DOM Querying with `this.$()`
+
+`this.$()` is a strongly-typed shorthand for `querySelector()`. It ensures the element exists (throws if not found) and provides proper IntelliSense and type-checking.
+
+```typescript
+// Standard way (verbose and unsafe):
+const counterDiv = this.querySelector("#div-counter") as HTMLDivElement | null;
+if (counterDiv) {
+  counterDiv.textContent = `${this.state.count}`;
+}
+
+// With PageElement:
+this.$("#div-counter").textContent = `${this.state.count}`;
+```
+
+You can also explicitly specify the element type:
+
+```typescript
+// Works with full type support (e.g. forms)
+this.$<HTMLFormElement>("#myForm").reset();
+```
+
+#### Simplified Event Handling with `this.on()`
+
+`this.on()` combines `querySelector()` and `addEventListener()` into a single, concise call.  
+It is fully typed, so the event handler knows exactly which event type is expected.
+
+```typescript
+// Increment the counter on button click
+this.on("#btn-inc", "click", () => {
+  this.state.count++;
+});
+```
+
+This keeps event wiring clean and consistent across components.
+
+---
 
 ## Usage Examples
 
@@ -105,6 +187,8 @@ export default class IndexPage extends PageElement {
   }
 }
 ```
+
+---
 
 ## How to Create a Layout
 
@@ -129,6 +213,8 @@ export default class BaseLayout extends PageElement {
   }
 }
 ```
+
+---
 
 ### Nested Layouts
 
