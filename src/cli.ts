@@ -70,7 +70,7 @@ try {
   const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
 
   pkgJson.name = projectName;
-  pkgJson.dependencies["@sahara/spa"] = `^${frameworkPkg.version}`;
+  pkgJson.dependencies[frameworkPkg.name] = `^${frameworkPkg.version}`;
 
   fs.writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2));
 } catch (error) {

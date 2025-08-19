@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@sahara/spa": ["node_modules/@martialboissonneault/sahara-spa"]
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",

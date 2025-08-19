@@ -1,5 +1,5 @@
 {
-  "name": "@sahara/spa",
+  "name": "@martialboissonneault/sahara-spa",
   "version": "1.0.0",
   "type": "module",
   "description": "A vanilla js framework for SPA.",

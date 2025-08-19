@@ -4,8 +4,8 @@
     "paths": {
       "$lib/*": ["src/lib/*"],
       "$routes/*": ["src/routes/*"],
-      "@sahara/spa": ["src/main.ts"],
-      "@sahara/spa/*": ["src/*"]
+      "@martialboissonneault/sahara-spa": ["src/main.ts"],
+      "@martialboissonneault/sahara-spa/*": ["src/*"]
     },
     "types": ["node"],
     "target": "ES2020",
