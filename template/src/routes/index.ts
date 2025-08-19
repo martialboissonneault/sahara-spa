@@ -15,9 +15,9 @@ export default class IndexPage extends PageElement {
   connectedCallback() {
     this.renderTemplate();
     this.bindEvents();
-    this.state.onChange("count", () => {
-      this.$("#div-counter").textContent = `${this.state.count}`;
-      console.log("👉 count has changed:", this.state.count);
+    this.state.onChange("count", (newCount) => {
+      this.$("#div-counter").textContent = `${newCount}`;
+      console.log("👉 count has changed:", newCount);
     });
   }
 

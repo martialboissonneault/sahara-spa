@@ -1,7 +1,13 @@
 /**
  * Callback invoked when a property changes.
+ * @param newValue The new value of the property.
  */
-type Callback = () => void;
+type Listener<T, K extends keyof T> = (newValue: T[K]) => void;
+
+/**
+ * A generic listener type for internal use.
+ */
+type AnyListener = (newValue: any) => void;
 
 /**
  * Observable<T>: T extended with onChange capability.
@@ -10,7 +16,7 @@ export type Observable<T extends object> = T & {
   /**
    * Register a callback for changes to property key.
    */
-  onChange(key: keyof T, callback: Callback): void;
+  onChange<K extends keyof T>(key: K, callback: Listener<T, K>): void;
 };
 
 export class Store {
@@ -21,40 +27,32 @@ export class Store {
    * @param target The initial state object.
    */
   static observe<T extends object>(target: T): Observable<T> {
-    const listeners = new Map<keyof T, Callback[]>();
+    const listeners = new Map<keyof T, AnyListener[]>();
 
-    const notify = (key: keyof T) => {
+    const notify = (key: keyof T, value: T[keyof T]) => {
       const cbs = listeners.get(key);
       if (cbs) {
-        cbs.forEach((cb) => cb());
+        cbs.forEach((cb) => cb(value));
       }
     };
 
     const proxy = new Proxy(target, {
-      get(obj, prop: string | symbol, receiver) {
-        const value = Reflect.get(obj, prop, receiver);
-        // Recursively observe nested objects
-        if (typeof value === "object" && value !== null) {
-          return Store.observe(value as object);
-        }
-        return value;
-      },
       set(obj, prop: string | symbol, value: any, receiver: any) {
         const result = Reflect.set(obj, prop as keyof T, value, receiver);
         // Notify only if property belongs to target
         if (typeof prop === "string" && (prop as keyof T) in obj) {
-          notify(prop as keyof T);
+          notify(prop as keyof T, value);
         }
         return result;
       },
     }) as Observable<T>;
 
     // Attach onChange method to proxy
-    proxy.onChange = (key: keyof T, callback: Callback) => {
+    proxy.onChange = <K extends keyof T>(key: K, callback: Listener<T, K>) => {
       if (!listeners.has(key)) {
         listeners.set(key, []);
       }
-      listeners.get(key)!.push(callback);
+      listeners.get(key)!.push(callback as AnyListener);
     };
 
     return proxy;
@@ -70,7 +68,7 @@ export class Store {
    * @param storageKey The key to use for localStorage.
    */
   static observePersistent<T extends object>(target: T, storageKey: string): Observable<T> {
-    const listeners = new Map<keyof T, Callback[]>();
+    const listeners = new Map<keyof T, AnyListener[]>();
 
     // 1) Load persisted state if available
     try {
@@ -83,10 +81,10 @@ export class Store {
       // ignore JSON errors
     }
 
-    const notify = (key: keyof T) => {
+    const notify = (key: keyof T, value: T[keyof T]) => {
       const cbs = listeners.get(key);
-      if (cbs) cbs.forEach((cb) => cb());
-      // 4) Persist entire state on any change
+      if (cbs) cbs.forEach((cb) => cb(value));
+      // Persist entire state on any change
       try {
         localStorage.setItem(storageKey, JSON.stringify(proxy));
       } catch {
@@ -95,27 +93,19 @@ export class Store {
     };
 
     const proxy = new Proxy(target, {
-      get(obj, prop: string | symbol, receiver) {
-        const value = Reflect.get(obj, prop, receiver);
-        // Recursively observe nested objects, but without persistence for them.
-        if (typeof value === "object" && value !== null) {
-          return Store.observe(value as object);
-        }
-        return value;
-      },
       set(obj, prop: string | symbol, value: any, receiver: any) {
         const result = Reflect.set(obj, prop as keyof T, value, receiver);
         // Notify only if property belongs to target
         if (typeof prop === "string" && (prop as keyof T) in obj) {
-          notify(prop as keyof T);
+          notify(prop as keyof T, value);
         }
         return result;
       },
     }) as Observable<T>;
 
-    proxy.onChange = (key: keyof T, callback: Callback) => {
+    proxy.onChange = <K extends keyof T>(key: K, callback: Listener<T, K>) => {
       if (!listeners.has(key)) listeners.set(key, []);
-      listeners.get(key)!.push(callback);
+      listeners.get(key)!.push(callback as AnyListener);
     };
 
     return proxy;

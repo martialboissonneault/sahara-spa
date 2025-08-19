@@ -83,9 +83,9 @@ export default class MyPage extends PageElement {
   private state = Store.observe<{ count: number }>({ count: 0 });
 
   connectedCallback() {
-    this.state.onChange("count", () => {
+    this.state.onChange("count", (newCount) => {
       // This code runs every time `state.count` changes
-      console.log(`The count is now: ${this.state.count}`);
+      console.log(`The count is now: ${newCount}`);
     });
   }
 }

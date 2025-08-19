@@ -92,3 +92,144 @@ ul.nav-links {
   max-width: 1024px;
   margin: 1.5rem auto;
 }
+
+/* Forms */
+fieldset {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+legend {
+  padding: 0 0.4rem;
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+.form-group.has-error {
+  border: 1px solid red;
+  border-radius: 6px;
+  background-color: #fff5ee;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 800px;
+}
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  /* margin-bottom: 1rem; */
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+input:invalid:focus,
+select:invalid:focus,
+textarea:invalid:focus {
+  border-color: red;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
+}
+.is-invalid {
+  border-color: red !important;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto;
+}
+.btn-primary:hover {
+  opacity: 0.85;
+}
+
+/* Todos */
+.todo-list-container {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+.todo-list-container li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.todo-list-container li.done {
+  background-color: #f8f9fa;
+}
+
+.todo-list-container li.done span {
+  text-decoration: line-through;
+  color: #adb5bd;
+}
+
+.todo-list-container li label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.todo-list-container li input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+
+.btn-delete:hover {
+  opacity: 0.7;
+}
