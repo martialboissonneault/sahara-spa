@@ -1,6 +1,6 @@
 {
   "name": "@martialboissonneault/sahara-spa",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A vanilla js framework for SPA.",
   "author": "Martial Boissonneault",
