@@ -12,14 +12,13 @@ A minimal, file-based routing framework for building Single Page Applications (S
 
 - [Getting Started](#getting-started)
 - [Core Concepts](#core-concepts)
+
   - [1. File-Based Routing](#1-file-based-routing)
-  - [2. State Management](#2-state-management)
-  - [3. Layouts](#3-layouts)
+  - [2. Layouts](#2-layouts)
+  - [3. Creating a Page](#3-creating-a-page)
   - [4. The PageElement Helper Class](#4-the-pageelement-helper-class)
-- [Usage Examples](#usage-examples)
-  - [Creating a Page](#creating-a-page)
-  - [How to Create a Layout](#how-to-create-a-layout)
-  - [Nested Layouts](#nested-layouts)
+  - [5. State Management](#5-state-management)
+
 - [License](#license)
 
 ---
@@ -65,7 +64,239 @@ The URL of a page is determined by its file path within the `src/routes` directo
 
 ---
 
-### 2. State Management
+### 2. Layouts
+
+Layouts are special components that wrap your pages, allowing you to share common UI elements like headers, footers, or sidebars across multiple routes.
+
+- A layout is defined in a `_layout.ts` file.
+- A layout can be placed in any directory inside `src/routes`.
+- If no `_layout.ts` file exists in a subdirectory, the layout from the nearest parent directory is used.
+
+**Default Root Layout (`/routes/_layout.ts`)**
+
+```typescript
+export default class BaseLayout extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = this.render();
+  }
+  protected renderHeader(): string {
+    return `
+        <h1>Header layout /routes/_layout.ts</h1>
+    `;
+  }
+  protected renderFooter(): string {
+    return `
+      	<h1>Footer layout /routes/_layout.ts</h1>
+    `;
+  }
+  /**
+   * Main render method: DO NOT modify this method or rename it.
+   */
+  protected render(): string {
+    return `
+      ${this.renderHeader()}
+      <div id="slot"></div>
+      ${this.renderFooter()}
+    `;
+  }
+}
+```
+
+**Assigning a Layout to a Page**
+
+```typescript
+import BaseLayout from "$routes/_layout";
+export default class TodosIndexPage extends PageElement {
+  static layout = BaseLayout;
+  //more code...
+}
+```
+
+#### Nested Layouts
+
+You can nest layouts infinitely. For example, a `/routes/admin/` directory can have its own layout that extends the root one:
+
+```typescript
+import BaseLayout from "$routes/_layout";
+export default class AdminLayout extends BaseLayout {
+  static layout = BaseLayout;
+  protected renderHeader(): string {
+    return `
+        <h2>Header layout /routes/admin/_layout.ts</h2>
+    `;
+  }
+  protected renderFooter(): string {
+    return `
+        <h2>Footer layout /routes/admin/_layout.ts</h2>
+    `;
+  }
+}
+```
+
+And `/routes/admin/stats/_layout.ts` can extend `AdminLayout`:
+
+```typescript
+import AdminLayout from "$routes/admin/_layout";
+export default class StatsLayout extends AdminLayout {
+  static layout = AdminLayout;
+  protected renderHeader(): string {
+    return `
+        <h3>Header layout /routes/admin/stats/_layout.ts</h3>
+      `;
+  }
+  protected renderFooter(): string {
+    return `
+        <h3>Footer layout /routes/admin/stats/_layout.ts</h3>
+      `;
+  }
+}
+```
+
+Resulting rendering:
+
+```
+<h1>Header layout /routes/_layout.ts</h1>
+  <h2>Header layout /routes/admin/_layout.ts</h2>
+    <h3>Header layout /routes/admin/stats/_layout.ts</h3>
+      ...page content...
+    <h3>Footer layout /routes/admin/stats/_layout.ts</h3>
+  <h2>Footer layout /routes/admin/_layout.ts</h2>
+<h1>Footer layout /routes/_layout.ts</h1>
+```
+
+#### Independent Layouts
+
+Layouts can also be fully independent, without inheriting from a parent:
+
+```typescript
+export default class IndependentLayout extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = this.render();
+  }
+  protected renderHeader(): string {
+    return `
+        <h1>Header layout /routes/admin/dashboard/_layout.ts</h1>
+    `;
+  }
+  protected renderFooter(): string {
+    return `
+      	<h1>Footer layout /routes/admin/dashboard/_layout.ts</h1>
+    `;
+  }
+  protected render(): string {
+    return `
+      ${this.renderHeader()}
+      <div id="slot"></div>
+      ${this.renderFooter()}
+    `;
+  }
+}
+```
+
+---
+
+### 3. Creating a Page
+
+Create a new file in the `src/routes` directory. The file must export a default class that represents the page component. You can extend either the provided `PageElement` helper class from the `@sahara/spa` package for extra conveniences, or extend the standard HTMLElement
+
+**`src/routes/index.ts`**
+
+```typescript
+import BaseLayout from "$routes/_layout";
+import { PageElement } from "$lib/js/PageElement";
+
+export default class SamplePage extends PageElement {
+  // Assigns the layout that will wrap this page.
+  static layout = BaseLayout;
+
+  /**
+   * Called by the browser when the component is inserted into the DOM.
+   * This is the best place to run setup code.
+   */
+  connectedCallback() {
+    this.renderTemplate();
+    this.fetchData(); // Fetch data after the template is ready.
+    this.bindEvents();
+  }
+
+  /**
+   * Injects the component's HTML structure.
+   */
+  private renderTemplate() {
+    this.innerHTML = `
+      <div id="data-container"></div>
+    `;
+  }
+
+  /**
+   * Fetches data from an API and updates the DOM.
+   */
+  private async fetchData() {
+    // TODO: Place your API call here.
+    // Example:
+    // const response = await fetch('https://api.example.com/data');
+    // const data = await response.json();
+    // this.$('#data-container').innerHTML = `... render data ...`;
+  }
+
+  /**
+   * Binds event listeners to interactive elements.
+   */
+  private bindEvents() {
+    // Handles click on #btn1.
+    this.on("#btn1", "click", () => {
+      // Logic for click event.
+    });
+
+    // Handles form submission on #btn2.
+    this.on("#btn2", "submit", async (e) => {
+      e.preventDefault();
+      // Logic for submit event.
+    });
+  }
+}
+```
+
+---
+
+### 4. The `PageElement` Helper Class
+
+While page components can extend the standard `HTMLElement`, Sahara SPA provides a convenient base class, `PageElement`, which offers useful shortcuts to simplify DOM interactions and ensure type safety with TypeScript.
+
+#### Typed DOM Querying with `this.$()`
+
+```typescript
+// Standard way (verbose and unsafe):
+const counterDiv = this.querySelector("#div-counter") as HTMLDivElement | null;
+if (counterDiv) {
+  counterDiv.textContent = `${this.state.count}`;
+}
+
+// With PageElement:
+this.$("#div-counter").textContent = `${this.state.count}`;
+```
+
+You can also explicitly specify the element type:
+
+```typescript
+// Works with full type support (e.g. forms)
+this.$<HTMLFormElement>("#myForm").reset();
+```
+
+#### Simplified Event Handling with `this.on()`
+
+```typescript
+// Increment the counter on button click
+this.on("#btn-inc", "click", () => {
+  this.state.count++;
+});
+```
+
+All event listeners attached with `this.on()` are **automatically removed** when the component is disconnected from the DOM, preventing memory leaks without any manual cleanup code.
+
+---
+
+### 5. State Management
 
 Sahara SPA includes a simple `Store` utility for managing state within your components. It provides two methods for creating observable state objects. When a property on a state object is modified, any registered callbacks are automatically triggered.
 
@@ -114,141 +345,6 @@ interface Todo {
 // The list of todos will be saved to localStorage under the key "my-todo-list"
 private state = Store.observePersistent<{ todos: Todo[] }>({ todos: [] }, "my-todo-list");
 ```
-
----
-
-### 3. Layouts
-
-Layouts are special components that wrap your pages, allowing you to share common UI elements like headers, footers, or sidebars across multiple routes.
-
-- A layout is defined in a `_layout.ts` file.
-- A layout can be placed in any directory inside `src/routes`.
-- Pages or other layouts within the same directory (or subdirectories) can use it.
-
----
-
-### 4. The `PageElement` Helper Class
-
-While page components can extend the standard `HTMLElement`, Sahara SPA provides a convenient base class, `PageElement`, which offers useful shortcuts to simplify DOM interactions and ensure type safety with TypeScript.
-
-#### Typed DOM Querying with `this.$()`
-
-`this.$()` is a strongly-typed shorthand for `querySelector()`. It ensures the element exists (throws if not found) and provides proper IntelliSense and type-checking.
-
-```typescript
-// Standard way (verbose and unsafe):
-const counterDiv = this.querySelector("#div-counter") as HTMLDivElement | null;
-if (counterDiv) {
-  counterDiv.textContent = `${this.state.count}`;
-}
-
-// With PageElement:
-this.$("#div-counter").textContent = `${this.state.count}`;
-```
-
-You can also explicitly specify the element type:
-
-```typescript
-// Works with full type support (e.g. forms)
-this.$<HTMLFormElement>("#myForm").reset();
-```
-
-#### Simplified Event Handling with `this.on()`
-
-`this.on()` combines `querySelector()` and `addEventListener()` into a single, concise call.
-It is fully typed, so the event handler knows exactly which event type is expected.
-
-All event listeners attached with `this.on()` are **automatically removed** when the component is disconnected from the DOM, preventing memory leaks without any manual cleanup code.
-
-```typescript
-// Increment the counter on button click
-this.on("#btn-inc", "click", () => {
-  this.state.count++;
-});
-```
-
-This keeps event wiring clean and consistent across components.
-
----
-
-## Usage Examples
-
-### Creating a Page
-
-Create a new file in the `src/routes` directory. The file must export a default class that extends `PageElement` from the `@sahara/spa` package.
-
-**`src/routes/index.ts`**
-
-```typescript
-import { PageElement } from "@sahara/spa";
-import BaseLayout from "./_layout.ts"; // Import the layout with a relative path
-
-export default class IndexPage extends PageElement {
-  // Statically assign the layout for this page
-  static layout = BaseLayout;
-
-  connectedCallback() {
-    this.innerHTML = `<h1>Welcome Home!</h1>`;
-  }
-}
-```
-
----
-
-## How to Create a Layout
-
-Create a `_layout.ts` file. A layout component must also extend `PageElement` and must contain an element with `id="slot"` where the child page or layout will be rendered.
-
-**`src/routes/_layout.ts` (Root Layout)**
-
-```typescript
-import { PageElement } from "@sahara/spa";
-
-export default class BaseLayout extends PageElement {
-  connectedCallback() {
-    this.innerHTML = `
-      <header>
-        <nav><a href="/">Home</a> <a href="/about/">About</a></nav>
-      </header>
-      <main>
-        <div id="slot"></div>
-      </main>
-      <footer>...</footer>
-    `;
-  }
-}
-```
-
----
-
-### Nested Layouts
-
-Layouts can be nested. For example, you can have a general site layout and a specific layout for a "dashboard" section.
-
-A child layout specifies its parent layout in the same way a page does: with a `static layout` property.
-
-**`src/routes/dashboard/_layout.ts` (Dashboard Layout)**
-
-```typescript
-import { PageElement } from "@sahara/spa";
-import RootLayout from "../_layout.ts"; // Import the root layout with a relative path
-
-export default class DashboardLayout extends PageElement {
-  // This layout will be rendered inside BaseLayout's slot
-  static layout = RootLayout;
-
-  connectedCallback() {
-    this.innerHTML = `
-      <aside>Dashboard Sidebar</aside>
-      <div class="dashboard-content">
-        <div id="slot"></div>
-      </div>
-    `;
-  }
-}
-```
-
-Any page inside `src/routes/dashboard/` can now use `DashboardLayout`, and it will be automatically wrapped by `BaseLayout` as well. This structure provides a powerful and flexible way to organize your application's UI.
 
 ---
 
