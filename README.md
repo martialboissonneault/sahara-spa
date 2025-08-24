@@ -203,7 +203,7 @@ Create a new file in the `src/routes` directory. The file must export a default 
 
 ```typescript
 import BaseLayout from "$routes/_layout";
-import { PageElement } from "$lib/js/PageElement";
+import { PageElement, Store } from "@sahara/spa";
 
 export default class SamplePage extends PageElement {
   // Assigns the layout that will wrap this page.
