@@ -18,6 +18,7 @@ A minimal, file-based routing framework for building Single Page Applications (S
   - [3. Creating a Page](#3-creating-a-page)
   - [4. The PageElement Helper Class](#4-the-pageelement-helper-class)
   - [5. State Management](#5-state-management)
+  - [6. Programmatic Navigation with navigateTo](#6-programmatic-navigation-with-navigateto)
 
 - [License](#license)
 
@@ -294,6 +295,29 @@ this.on("#btn-inc", "click", () => {
 
 All event listeners attached with `this.on()` are **automatically removed** when the component is disconnected from the DOM, preventing memory leaks without any manual cleanup code.
 
+#### Retrieving Form Data with `this.getFormData()`
+
+`getFormData()` is a convenience method to extract all form fields into a key-value object. It also correctly handles multiple checkboxes with the same name, returning an array of values when necessary.
+
+**Example: Collecting form data**
+
+```typescript
+// HTML
+<form id="myForm">
+  <input type="text" name="username" value="john" />
+  <input type="checkbox" name="colors" value="red" checked />
+  <input type="checkbox" name="colors" value="blue" checked />
+  <button type="submit">Submit</button>
+</form>;
+
+// In a PageElement component
+const data = this.getFormData("#myForm");
+console.log(data);
+// { username: "john", colors: ["red", "blue"] }
+```
+
+This helps avoid manually iterating over `FormData` when you need a simple JavaScript object.
+
 ---
 
 ### 5. State Management
@@ -345,6 +369,28 @@ interface Todo {
 // The list of todos will be saved to localStorage under the key "my-todo-list"
 private state = Store.observePersistent<{ todos: Todo[] }>({ todos: [] }, "my-todo-list");
 ```
+
+---
+
+### 6. Programmatic Navigation with `navigateTo`
+
+In addition to declarative navigation through links (`<a href="...">`), Sahara SPA provides a simple utility function `navigateTo()` for **programmatic routing**. This is useful when you want to trigger navigation from code—for example, after a form submission, a button click, or a state change.
+
+**Example: Navigate to Home when a button is clicked**
+
+```typescript
+import { navigateTo } from "@sahara/spa";
+
+this.on("#btn-home", "click", () => {
+  navigateTo("/");
+});
+```
+
+- `navigateTo(path: string)` updates the browser’s history and loads the corresponding route without reloading the page.
+- It behaves the same way as clicking a normal link, but gives you control directly from JavaScript.
+- You can use it in any component, whether it extends `PageElement` or the standard `HTMLElement`.
+
+This approach keeps routing **explicit and flexible**, especially in situations where links alone are not enough.
 
 ---
 
